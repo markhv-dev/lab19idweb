@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ejercicio 4 - Pikachu con .then</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: #f4f4f4;
+            padding: 20px;
+            text-align: center;
+        }
+        .container {
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            max-width: 400px;
+            margin: 0 auto;
+            box-shadow: 0 0 10px rgba(0,0,0,0.2);
+        }
+        button {
+            padding: 10px 20px;
+            font-size: 16px;
+            background: #f39c12;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            margin: 10px;
+        }
+        button:hover {
+            background: #e67e22;
+        }
+        #resultado {
+            margin-top: 20px;
+            font-size: 18px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Ejercicio 4</h1>
+        <p>Altura y peso de Pikachu usando .then</p>
+        <button onclick="obtenerPikachu()">Obtener Datos</button>
+        <div id="resultado"></div>
+    </div>
+
+    <script>
+        function obtenerPikachu() {
+            fetch("https://pokeapi.co/api/v2/pokemon/pikachu")
+                .then(res => res.json())
+                .then(data => {
+                    const resultado = document.getElementById('resultado');
+                    resultado.innerHTML = `
+                        <p><strong>Nombre:</strong> ${data.name.toUpperCase()}</p>
+                        <p><strong>Altura:</strong> ${data.height}</p>
+                        <p><strong>Peso:</strong> ${data.weight}</p>
+                    `;
+                    console.log("Altura:", data.height);
+                    console.log("Peso:", data.weight);
+                })
+                .catch(err => {
+                    console.error("Error:", err);
+                    document.getElementById('resultado').innerHTML =
+                        '<p style="color: red;">Error al obtener datos</p>';
+                });
+        }
+    </script>
+</body>
+</html>

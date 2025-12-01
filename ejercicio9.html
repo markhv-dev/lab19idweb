@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ejercicio 9 - Buscador Visual de Pokémon</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: #f4f4f4;
+            padding: 20px;
+            text-align: center;
+        }
+
+        h1 {
+            color: #333;
+            margin-bottom: 30px;
+        }
+
+        .search-container {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            max-width: 400px;
+            margin: 0 auto 30px auto;
+            box-shadow: 0 0 10px rgba(0,0,0,0.2);
+        }
+
+        input {
+            padding: 12px;
+            font-size: 16px;
+            width: 200px;
+            border: 2px solid #ddd;
+            border-radius: 5px;
+            margin: 10px;
+        }
+
+        input:focus {
+            outline: none;
+            border-color: #3498db;
+        }
+
+        button {
+            padding: 12px 25px;
+            font-size: 16px;
+            background: #3498db;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        button:hover {
+            background: #2980b9;
+            transform: translateY(-2px);
+        }
+
+        #card {
+            margin-top: 20px;
+            background: white;
+            padding: 30px;
+            border-radius: 15px;
+            width: 350px;
+            margin-left: auto;
+            margin-right: auto;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.3);
+        }
+
+        #card img {
+            width: 150px;
+            height: 150px;
+            margin: 10px 0;
+        }
+
+        #card h2 {
+            color: #2c3e50;
+            text-transform: uppercase;
+            margin: 15px 0;
+            font-size: 28px;
+        }
+
+        #card p {
+            font-size: 16px;
+            margin: 10px 0;
+            text-align: left;
+            padding: 0 20px;
+        }
+
+        #card strong {
+            color: #3498db;
+        }
+
+        .error {
+            color: #e74c3c;
+            font-size: 18px;
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+    <h1>Ejercicio 9 - Buscador de Pokémon</h1>
+
+    <div class="search-container">
+        <p>Ingresa el ID o nombre de un Pokémon</p>
+        <input type="text" id="pokemonInput" placeholder="Ej: 25 o pikachu">
+        <button onclick="buscarPokemon()">🔍 Buscar</button>
+    </div>
+
+    <div id="card"></div>
+
+    <script>
+        async function buscarPokemon() {
+            const input = document.getElementById('pokemonInput').value.toLowerCase().trim();
+            const card = document.getElementById('card');
+
+            if (!input) {
+                card.innerHTML = '<p class="error">Por favor ingresa un ID o nombre</p>';
+                return;
+            }
+
+            card.innerHTML = '<p>Cargando...</p>';
+
+            try {
+                const res = await fetch(`https://pokeapi.co/api/v2/pokemon/${input}`);
+
+                if (!res.ok) {
+                    throw new Error('Pokémon no encontrado');
+                }
+
+                const data = await res.json();
+
+                const habilidades = data.abilities.map(a => a.ability.name).join(", ");
+
+                card.innerHTML = `
+                    <img src="${data.sprites.front_default}" alt="${data.name}">
+                    <h2>${data.name.toUpperCase()}</h2>
+                    <p><strong>ID:</strong> ${data.id}</p>
+                    <p><strong>Peso:</strong> ${data.weight}</p>
+                    <p><strong>Altura:</strong> ${data.height}</p>
+                    <p><strong>Habilidades:</strong> ${habilidades}</p>
+                `;
+
+                console.log('Pokémon encontrado:', data.name);
+                console.log('ID:', data.id);
+                console.log('Peso:', data.weight);
+                console.log('Altura:', data.height);
+                console.log('Habilidades:', habilidades);
+
+            } catch (error) {
+                card.innerHTML = `<p class="error">❌ ${error.message}</p>`;
+                console.error('Error:', error.message);
+            }
+        }
+
+        document.getElementById('pokemonInput').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                buscarPokemon();
+            }
+        });
+    </script>
+</body>
+</html>

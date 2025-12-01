@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ejercicio 6 - Sprite de Charizard</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: #f4f4f4;
+            padding: 20px;
+            text-align: center;
+        }
+        .container {
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            max-width: 400px;
+            margin: 0 auto;
+            box-shadow: 0 0 10px rgba(0,0,0,0.2);
+        }
+        button {
+            padding: 10px 20px;
+            font-size: 16px;
+            background: #e74c3c;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            margin: 10px;
+        }
+        button:hover {
+            background: #c0392b;
+        }
+        #resultado {
+            margin-top: 20px;
+            font-size: 14px;
+            word-break: break-all;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Ejercicio 6</h1>
+        <p>URL del sprite de Charizard</p>
+        <button onclick="obtenerSpriteCharizard()">Obtener URL</button>
+        <div id="resultado"></div>
+    </div>
+
+    <script>
+        async function obtenerSpriteCharizard() {
+            try {
+                const res = await fetch("https://pokeapi.co/api/v2/pokemon/charizard");
+
+                if (!res.ok) {
+                    throw new Error('Error en la solicitud');
+                }
+
+                const data = await res.json();
+                const spriteUrl = data.sprites.front_default;
+
+                const resultado = document.getElementById('resultado');
+                resultado.innerHTML = `
+                    <p><strong>URL del sprite:</strong></p>
+                    <p>${spriteUrl}</p>
+                    <img src="${spriteUrl}" alt="Charizard" style="margin-top: 15px;">
+                `;
+
+                console.log("URL sprites.front_default:", spriteUrl);
+            } catch (error) {
+                console.error("Error:", error);
+                document.getElementById('resultado').innerHTML =
+                    '<p style="color: red;">Error al obtener datos</p>';
+            }
+        }
+    </script>
+</body>
+</html>

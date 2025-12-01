@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ejercicio 7 - Primeros 20 Pokémon</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: #f4f4f4;
+            padding: 20px;
+        }
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.2);
+        }
+        h1 {
+            text-align: center;
+            color: #333;
+        }
+        button {
+            display: block;
+            margin: 20px auto;
+            padding: 10px 20px;
+            font-size: 16px;
+            background: #27ae60;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        button:hover {
+            background: #229954;
+        }
+        #lista {
+            margin-top: 20px;
+        }
+        .pokemon-item {
+            padding: 10px;
+            margin: 5px 0;
+            background: #ecf0f1;
+            border-radius: 5px;
+            border-left: 4px solid #3498db;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Ejercicio 7</h1>
+        <p style="text-align: center;">Lista de los primeros 20 Pokémon</p>
+        <button onclick="listarPokemon()">Cargar Pokémon</button>
+        <div id="lista"></div>
+    </div>
+
+    <script>
+        async function listarPokemon() {
+            try {
+                const res = await fetch("https://pokeapi.co/api/v2/pokemon?limit=20");
+
+                if (!res.ok) {
+                    throw new Error('Error en la solicitud');
+                }
+
+                const data = await res.json();
+                const lista = document.getElementById('lista');
+
+                lista.innerHTML = '<h3>Primeros 20 Pokémon:</h3>';
+
+                data.results.forEach((pokemon, index) => {
+                    const item = document.createElement('div');
+                    item.className = 'pokemon-item';
+                    item.innerHTML = `<strong>${index + 1}.</strong> ${pokemon.name}`;
+                    lista.appendChild(item);
+
+                    console.log(`${index + 1}. ${pokemon.name}`);
+                });
+
+            } catch (error) {
+                console.error("Error:", error);
+                document.getElementById('lista').innerHTML =
+                    '<p style="color: red;">Error al cargar Pokémon</p>';
+            }
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ejercicio 5 - Pikachu con async/await</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: #f4f4f4;
+            padding: 20px;
+            text-align: center;
+        }
+        .container {
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            max-width: 400px;
+            margin: 0 auto;
+            box-shadow: 0 0 10px rgba(0,0,0,0.2);
+        }
+        button {
+            padding: 10px 20px;
+            font-size: 16px;
+            background: #9b59b6;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            margin: 10px;
+        }
+        button:hover {
+            background: #8e44ad;
+        }
+        #resultado {
+            margin-top: 20px;
+            font-size: 18px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Ejercicio 5</h1>
+        <p>Altura y peso de Pikachu usando async/await</p>
+        <button onclick="obtenerPikachu()">Obtener Datos</button>
+        <div id="resultado"></div>
+    </div>
+
+    <script>
+        async function obtenerPikachu() {
+            try {
+                const res = await fetch("https://pokeapi.co/api/v2/pokemon/pikachu");
+
+                if (!res.ok) {
+                    throw new Error('Error en la solicitud');
+                }
+
+                const data = await res.json();
+
+                const resultado = document.getElementById('resultado');
+                resultado.innerHTML = `
+                    <p><strong>Nombre:</strong> ${data.name.toUpperCase()}</p>
+                    <p><strong>Altura:</strong> ${data.height}</p>
+                    <p><strong>Peso:</strong> ${data.weight}</p>
+                `;
+
+                console.log("Altura:", data.height);
+                console.log("Peso:", data.weight);
+            } catch (error) {
+                console.error("Error:", error);
+                document.getElementById('resultado').innerHTML =
+                    '<p style="color: red;">Error al obtener datos</p>';
+            }
+        }
+    </script>
+</body>
+</html>

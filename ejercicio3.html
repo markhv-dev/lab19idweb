@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ejercicio 3 - Obtener Nombre Pokémon</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: #f4f4f4;
+            padding: 20px;
+            text-align: center;
+        }
+        .container {
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            max-width: 400px;
+            margin: 0 auto;
+            box-shadow: 0 0 10px rgba(0,0,0,0.2);
+        }
+        input {
+            padding: 10px;
+            font-size: 16px;
+            width: 200px;
+            margin: 10px;
+        }
+        button {
+            padding: 10px 20px;
+            font-size: 16px;
+            background: #3498db;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        button:hover {
+            background: #2980b9;
+        }
+        #resultado {
+            margin-top: 20px;
+            font-size: 18px;
+            color: #333;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Ejercicio 3</h1>
+        <p>Ingresa el ID de un Pokémon</p>
+        <input type="number" id="pokemonId" placeholder="Ej: 25" min="1">
+        <button onclick="buscarPokemon()">Buscar</button>
+        <div id="resultado"></div>
+    </div>
+
+    <script>
+        async function buscarPokemon() {
+            const id = document.getElementById('pokemonId').value;
+            const resultado = document.getElementById('resultado');
+
+            if (!id) {
+                resultado.innerHTML = '<p style="color: red;">Por favor ingresa un ID</p>';
+                return;
+            }
+
+            try {
+                const res = await fetch(`https://pokeapi.co/api/v2/pokemon/${id}`);
+
+                if (!res.ok) {
+                    throw new Error('Pokémon no encontrado');
+                }
+
+                const data = await res.json();
+                resultado.innerHTML = `<p><strong>Nombre:</strong> ${data.name.toUpperCase()}</p>`;
+                console.log('Nombre:', data.name);
+            } catch (error) {
+                resultado.innerHTML = `<p style="color: red;">Error: ${error.message}</p>`;
+                console.error('Error:', error.message);
+            }
+        }
+    </script>
+</body>
+</html>
