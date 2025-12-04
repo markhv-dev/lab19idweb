@@ -1,0 +1,85 @@
+<!--
+Laboratorio 19 - Ejercicio 10
+Autor: Mark Hancco
+Colaboró: Claude Code
+-->
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ejercicio 10 - Pokémon del 1 al 10</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: #f4f4f4;
+            padding: 20px;
+        }
+        h1 {
+            text-align: center;
+            color: #333;
+        }
+        #pokemonContainer {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px;
+            justify-content: center;
+            margin-top: 20px;
+        }
+        .pokemon-card {
+            background: white;
+            border-radius: 10px;
+            padding: 20px;
+            text-align: center;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            width: 150px;
+        }
+        .pokemon-card img {
+            width: 100px;
+            height: 100px;
+        }
+        .pokemon-card h3 {
+            color: #333;
+            text-transform: uppercase;
+            font-size: 16px;
+            margin: 10px 0;
+        }
+        .pokemon-card p {
+            color: #666;
+            margin: 5px 0;
+        }
+    </style>
+</head>
+<body>
+    <h1>Ejercicio 10 - Primeros 10 Pokémon</h1>
+    <div id="pokemonContainer"></div>
+
+    <script>
+        async function cargarPokemon() {
+            const container = document.getElementById('pokemonContainer');
+
+            for (let i = 1; i <= 10; i++) {
+                try {
+                    const res = await fetch(`https://pokeapi.co/api/v2/pokemon/${i}`);
+                    const data = await res.json();
+
+                    const card = document.createElement('div');
+                    card.className = 'pokemon-card';
+                    card.innerHTML = `
+                        <img src="${data.sprites.front_default}" alt="${data.name}">
+                        <h3>${data.name}</h3>
+                        <p>ID: ${data.id}</p>
+                    `;
+                    container.appendChild(card);
+
+                    console.log(`Pokémon: ${data.name}, ID: ${data.id}`);
+                } catch (error) {
+                    console.error('Error:', error);
+                }
+            }
+        }
+
+        cargarPokemon();
+    </script>
+</body>
+</html>

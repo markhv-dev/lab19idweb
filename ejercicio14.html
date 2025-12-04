@@ -1,0 +1,151 @@
+<!--
+Laboratorio 19 - Ejercicio 14
+Autor: Mark Hancco
+Colaboró: Claude Code
+-->
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ejercicio 14 - Paginación de Pokémon</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: #f4f4f4;
+            padding: 20px;
+        }
+        h1 {
+            text-align: center;
+            color: #333;
+        }
+        #pokemonContainer {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            margin: 30px 0;
+            flex-wrap: wrap;
+        }
+        .pokemon-card {
+            background: white;
+            border-radius: 10px;
+            padding: 20px;
+            text-align: center;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            width: 150px;
+        }
+        .pokemon-card img {
+            width: 100px;
+            height: 100px;
+        }
+        .pokemon-card h3 {
+            color: #333;
+            text-transform: uppercase;
+            font-size: 16px;
+            margin: 10px 0;
+        }
+        .pokemon-card p {
+            color: #666;
+            margin: 5px 0;
+        }
+        .navigation {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            align-items: center;
+        }
+        button {
+            padding: 10px 20px;
+            font-size: 16px;
+            background: #3498db;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        button:hover:not(:disabled) {
+            background: #2980b9;
+        }
+        button:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+        }
+        .page-info {
+            font-size: 18px;
+            color: #333;
+        }
+    </style>
+</head>
+<body>
+    <h1>Ejercicio 14 - Navegación de Pokémon (12 Pokémon, 3 a la vez)</h1>
+
+    <div id="pokemonContainer"></div>
+
+    <div class="navigation">
+        <button id="btnAnterior" onclick="anterior()">Anterior</button>
+        <span class="page-info" id="pageInfo">Grupo 1 de 4</span>
+        <button id="btnSiguiente" onclick="siguiente()">Siguiente</button>
+    </div>
+
+    <script>
+        let todosLosPokemon = [];
+        let paginaActual = 0;
+        const pokemonPorPagina = 3;
+
+        async function cargarTodosLosPokemon() {
+            for (let i = 1; i <= 12; i++) {
+                const res = await fetch(`https://pokeapi.co/api/v2/pokemon/${i}`);
+                const data = await res.json();
+                todosLosPokemon.push(data);
+            }
+            mostrarPagina(0);
+        }
+
+        function mostrarPagina(numPagina) {
+            paginaActual = numPagina;
+            const container = document.getElementById('pokemonContainer');
+            container.innerHTML = '';
+
+            const inicio = numPagina * pokemonPorPagina;
+            const fin = inicio + pokemonPorPagina;
+            const pokemonPagina = todosLosPokemon.slice(inicio, fin);
+
+            pokemonPagina.forEach(pokemon => {
+                const card = document.createElement('div');
+                card.className = 'pokemon-card';
+                card.innerHTML = `
+                    <img src="${pokemon.sprites.front_default}" alt="${pokemon.name}">
+                    <h3>${pokemon.name}</h3>
+                    <p>ID: ${pokemon.id}</p>
+                `;
+                container.appendChild(card);
+                console.log(`Mostrando: ${pokemon.name} (ID: ${pokemon.id})`);
+            });
+
+            actualizarBotones();
+        }
+
+        function actualizarBotones() {
+            const totalPaginas = Math.ceil(12 / pokemonPorPagina);
+            document.getElementById('btnAnterior').disabled = (paginaActual === 0);
+            document.getElementById('btnSiguiente').disabled = (paginaActual === totalPaginas - 1);
+            document.getElementById('pageInfo').textContent = `Grupo ${paginaActual + 1} de ${totalPaginas}`;
+        }
+
+        function anterior() {
+            if (paginaActual > 0) {
+                mostrarPagina(paginaActual - 1);
+            }
+        }
+
+        function siguiente() {
+            const totalPaginas = Math.ceil(12 / pokemonPorPagina);
+            if (paginaActual < totalPaginas - 1) {
+                mostrarPagina(paginaActual + 1);
+            }
+        }
+
+        cargarTodosLosPokemon();
+    </script>
+</body>
+</html>

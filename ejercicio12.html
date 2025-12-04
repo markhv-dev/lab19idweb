@@ -1,0 +1,127 @@
+<!--
+Laboratorio 19 - Ejercicio 12
+Autor: Mark Hancco
+Colaboró: Claude Code
+-->
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ejercicio 12 - Estadísticas de Pokémon</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: #f4f4f4;
+            padding: 20px;
+            text-align: center;
+        }
+        .container {
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            max-width: 600px;
+            margin: 0 auto;
+            box-shadow: 0 0 10px rgba(0,0,0,0.2);
+        }
+        input {
+            padding: 10px;
+            font-size: 16px;
+            width: 200px;
+            margin: 10px;
+            border: 2px solid #ddd;
+            border-radius: 5px;
+        }
+        button {
+            padding: 10px 20px;
+            font-size: 16px;
+            background: #3498db;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        button:hover {
+            background: #2980b9;
+        }
+        #resultado {
+            margin-top: 20px;
+        }
+        #resultado img {
+            width: 150px;
+        }
+        .stat-item {
+            text-align: left;
+            margin: 10px 0;
+            padding: 10px;
+            background: #ecf0f1;
+            border-radius: 5px;
+        }
+        .stat-name {
+            font-weight: bold;
+            color: #2c3e50;
+        }
+        .stat-value {
+            float: right;
+            color: #3498db;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Ejercicio 12</h1>
+        <p>Ingresa el nombre o ID de un Pokémon</p>
+        <input type="text" id="pokemonInput" placeholder="Ej: pikachu">
+        <button onclick="buscarPokemon()">Ver Estadísticas</button>
+        <div id="resultado"></div>
+    </div>
+
+    <script>
+        async function buscarPokemon() {
+            const input = document.getElementById('pokemonInput').value.toLowerCase().trim();
+            const resultado = document.getElementById('resultado');
+
+            if (!input) {
+                resultado.innerHTML = '<p style="color: red;">Por favor ingresa un nombre o ID</p>';
+                return;
+            }
+
+            try {
+                const res = await fetch(`https://pokeapi.co/api/v2/pokemon/${input}`);
+                if (!res.ok) throw new Error('Pokémon no encontrado');
+
+                const data = await res.json();
+
+                let statsHTML = '';
+                data.stats.forEach(stat => {
+                    statsHTML += `
+                        <div class="stat-item">
+                            <span class="stat-name">${stat.stat.name}</span>
+                            <span class="stat-value">${stat.base_stat}</span>
+                        </div>
+                    `;
+                    console.log(`${stat.stat.name}: ${stat.base_stat}`);
+                });
+
+                resultado.innerHTML = `
+                    <img src="${data.sprites.front_default}" alt="${data.name}">
+                    <h2>${data.name.toUpperCase()}</h2>
+                    <h3>Estadísticas Base</h3>
+                    ${statsHTML}
+                `;
+
+                console.log('Pokémon:', data.name);
+
+            } catch (error) {
+                resultado.innerHTML = `<p style="color: red;">Error: ${error.message}</p>`;
+                console.error('Error:', error.message);
+            }
+        }
+
+        document.getElementById('pokemonInput').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') buscarPokemon();
+        });
+    </script>
+</body>
+</html>

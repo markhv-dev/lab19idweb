@@ -1,0 +1,117 @@
+<!--
+Laboratorio 19 - Ejercicio 11
+Autor: Mark Hancco
+Colaboró: Claude Code
+-->
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ejercicio 11 - Buscar Pokémon y Tipos</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: #f4f4f4;
+            padding: 20px;
+            text-align: center;
+        }
+        .container {
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            max-width: 500px;
+            margin: 0 auto;
+            box-shadow: 0 0 10px rgba(0,0,0,0.2);
+        }
+        input {
+            padding: 10px;
+            font-size: 16px;
+            width: 200px;
+            margin: 10px;
+            border: 2px solid #ddd;
+            border-radius: 5px;
+        }
+        button {
+            padding: 10px 20px;
+            font-size: 16px;
+            background: #3498db;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        button:hover {
+            background: #2980b9;
+        }
+        #resultado {
+            margin-top: 20px;
+        }
+        #resultado img {
+            width: 150px;
+        }
+        .tipos {
+            margin-top: 10px;
+        }
+        .tipo {
+            display: inline-block;
+            padding: 5px 15px;
+            margin: 5px;
+            border-radius: 5px;
+            color: white;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Ejercicio 11</h1>
+        <p>Ingresa el nombre o ID de un Pokémon</p>
+        <input type="text" id="pokemonInput" placeholder="Ej: charizard">
+        <button onclick="buscarPokemon()">Buscar</button>
+        <div id="resultado"></div>
+    </div>
+
+    <script>
+        async function buscarPokemon() {
+            const input = document.getElementById('pokemonInput').value.toLowerCase().trim();
+            const resultado = document.getElementById('resultado');
+
+            if (!input) {
+                resultado.innerHTML = '<p style="color: red;">Por favor ingresa un nombre o ID</p>';
+                return;
+            }
+
+            try {
+                const res = await fetch(`https://pokeapi.co/api/v2/pokemon/${input}`);
+                if (!res.ok) throw new Error('Pokémon no encontrado');
+
+                const data = await res.json();
+
+                // Obtener tipos
+                const tipos = data.types.map(t => t.type.name);
+                const tiposHTML = tipos.map(tipo => `<span class="tipo" style="background: #888">${tipo}</span>`).join('');
+
+                resultado.innerHTML = `
+                    <img src="${data.sprites.front_default}" alt="${data.name}">
+                    <h2>${data.name.toUpperCase()}</h2>
+                    <p><strong>ID:</strong> ${data.id}</p>
+                    <p><strong>Tipos:</strong></p>
+                    <div class="tipos">${tiposHTML}</div>
+                `;
+
+                console.log('Pokémon:', data.name);
+                console.log('Tipos:', tipos.join(', '));
+
+            } catch (error) {
+                resultado.innerHTML = `<p style="color: red;">Error: ${error.message}</p>`;
+                console.error('Error:', error.message);
+            }
+        }
+
+        document.getElementById('pokemonInput').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') buscarPokemon();
+        });
+    </script>
+</body>
+</html>
